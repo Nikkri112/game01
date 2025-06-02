@@ -3,7 +3,9 @@ using UnityEngine;
 public class CameraScript : MonoBehaviour
 {
 
-    public float camSpeed = 0.000001f;
+    public float camSpeed = 0.0001f;
+    public float camDistance = 6f;
+    private Camera cam;
     public GameObject Player;
     private Transform playerTransform;
     private Transform cameraTransform;
@@ -11,6 +13,8 @@ public class CameraScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        cam = GetComponent<Camera>();
+        cam.orthographicSize = camDistance;
         playerTransform = Player.GetComponent<Transform>();
         cameraTransform = GetComponent<Transform>();
     }
