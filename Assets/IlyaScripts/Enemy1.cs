@@ -1,9 +1,11 @@
 using System;
+using UnityEditor.Rendering.Analytics;
 using UnityEditorInternal;
 using UnityEngine;
 
 public class Enemy1 : MonoBehaviour
 {
+    public string tagToIgnore = "IgnoreThisTag";
     public GameObject bulletPrefab;
     public float shootInterval = 2f;
     public float moveSpeed = 0.75f;
@@ -16,6 +18,7 @@ public class Enemy1 : MonoBehaviour
     public float obstacleCheckDistance = 0.5f; // Как далеко искать препятствия перед собой
     public GameObject patrolPoint1 = null;
     public GameObject patrolPoint2 = null;
+    public float attackRange = 2;
     private float shootTimer = 0f;
     protected GameObject player;
     private Rigidbody2D rb;
@@ -52,11 +55,11 @@ public class Enemy1 : MonoBehaviour
         Vector2 direction = new Vector2(Mathf.Sign(moveDirection.x), 0f);
         if (direction.x > 0f)
         {
-            lookdir.flipX = true;
+            lookdir.flipX = false;
         }
         else
         {
-            lookdir.flipX = false; 
+            lookdir.flipX = true; 
         }
 
             anim.SetFloat("Horizontal Velocity", Mathf.Abs(rb.linearVelocityX));
@@ -89,15 +92,17 @@ public class Enemy1 : MonoBehaviour
         if (bulletPrefab == null) return;
 
         Vector2 shootDirection = (player.transform.position - transform.position).normalized;
-
+        anim.SetTrigger("Attack");
         // Спавним пулю немного перед врагом, чтобы она не исчезала
         Vector2 spawnPosition = (Vector2)transform.position + shootDirection * (obstacleCheckDistance+0.2f);
 
         GameObject bullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity);
 
-        Bullet bulletScript = bullet.GetComponent<Bullet>();
+        ZombAttack bulletScript = bullet.GetComponent<ZombAttack>();
+        //Debug.Log(shootDirection);
         if (bulletScript != null)
         {
+            bulletScript.lifeTime = attackRange/bulletScript.speed;
             bulletScript.direction = shootDirection;
             bulletScript.shooter = gameObject;
         }
@@ -162,7 +167,7 @@ public class Enemy1 : MonoBehaviour
             }
 
             // Стреляем по таймеру
-            if (shootTimer >= shootInterval)
+            if (shootTimer >= shootInterval && distanceToPlayer <= attackRange)
             {
                 shootTimer = 0f;
                 ShootAtPlayer();
@@ -182,7 +187,7 @@ public class Enemy1 : MonoBehaviour
             }
 
             // Стреляем по таймеру
-            if (shootTimer >= shootInterval)
+            if (shootTimer >= shootInterval && distanceToPlayer<=attackRange)
             {
                 shootTimer = 0f;
                 ShootAtPlayer();
@@ -243,6 +248,14 @@ public class Enemy1 : MonoBehaviour
                     GoToPointA = true;
                 }
             }
+        }
+    }
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag(tagToIgnore))
+        {
+            Debug.Log("НЕА");
+            Physics.IgnoreCollision(GetComponent<Collider>(), collision.collider); // Игнорируем столкновение
         }
     }
 }

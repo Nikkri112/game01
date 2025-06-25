@@ -1,4 +1,3 @@
 repository "Rjavi228/RjaviChronicles@10171410568534@cloud"
   path "/"
-    br "/main"
-    co "/main"
+    smartbranch "/main" changeset "78"      

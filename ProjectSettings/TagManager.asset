@@ -18,8 +18,8 @@ TagManager:
   - UI
   - PlayerAttacks
   - Enemy
-  - 
-  - 
+  - PlayerInvulnerable
+  - Player
   - 
   - 
   - 

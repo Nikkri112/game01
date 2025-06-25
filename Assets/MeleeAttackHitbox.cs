@@ -21,13 +21,6 @@ public class MeleeAttackHitbox : MonoBehaviour
     {
         HandleHit(other.gameObject);
     }
-
-    // Если у вас 3D коллайдеры, используйте OnTriggerEnter
-    private void OnTriggerEnter(Collider other)
-    {
-        HandleHit(other.gameObject);
-    }
-
     private void HandleHit(GameObject hitObject)
     {
         // Игнорируем попадание в самого атакующего или объекты, которые уже были задеты в этом ударе

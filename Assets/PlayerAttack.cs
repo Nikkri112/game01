@@ -14,6 +14,8 @@ public class PlayerAttack : MonoBehaviour
 
     public MonoBehaviour playerMovementScript;
 
+    public Animator AttackAnimator;
+
     // --- Новые поля для расчета точки спавна ---
     public float forwardOffset = 1.0f; // Насколько далеко вперед от игрока спавнится снаряд
     // Если у вас нет CharacterController, можно использовать эту высоту вручную
@@ -26,6 +28,8 @@ public class PlayerAttack : MonoBehaviour
     private CharacterController characterController; // Для получения высоты игрока, если есть
     private Collider2D playerCollider; // Общий коллайдер игрока
     private Rigidbody2D prb;
+
+    private string[] triggerstrings = { "PunchDown", "PunchUp", "PunchDown" };
 
     void Start()
     {
@@ -48,6 +52,7 @@ public class PlayerAttack : MonoBehaviour
         if (Input.GetButtonDown("Fire1") && !isAttacking && Time.time - lastAttackTime >= attackCooldown)
         {
             StartCoroutine(PerformAttackSequence());
+            //AttackAnimator.SetTrigger("PunchAttack");
         }
     }
 
@@ -66,6 +71,7 @@ public class PlayerAttack : MonoBehaviour
         {
             Debug.LogWarning("Player movement script not assigned in PlayerAttack script!");
         }
+        
 
         // --- Расчет точки спавна атаки ---
         Vector3 spawnPosition = CalculateAttackSpawnPoint();
@@ -76,14 +82,21 @@ public class PlayerAttack : MonoBehaviour
 
         GameObject currentPrefab = attackPrefabs[currentAttackIndex];
 
+        //AttackAnimator.SetTrigger(triggerstrings[currentAttackIndex]);
+        
+
         // Создаем экземпляр префаба
         GameObject projectile = Instantiate(currentPrefab, spawnPosition, spawnRotation);
-        projectile.transform.localScale = new Vector3(Mathf.Sign(scale.x) * projectile.transform.localScale.x, projectile.transform.localScale.y, projectile.transform.localScale.z) ;
+        projectile.transform.localScale = new Vector3(Mathf.Sign(scale.x) * projectile.transform.localScale.x, projectile.transform.localScale.y, projectile.transform.localScale.z);
+        MeleeAttackHitbox meleeAttackHitbox = projectile.GetComponent<MeleeAttackHitbox>();
+        meleeAttackHitbox.attacker = gameObject;
+        //ActivateAttack();
+        Debug.Log("я ебаный долбаеб");
 
         currentAttackIndex = (currentAttackIndex + 1) % attackPrefabs.Length;
 
+        AttackAnimator.SetTrigger(triggerstrings[currentAttackIndex]);
         yield return new WaitForSeconds(attackAnimationDuration);
-
         if (playerMovementScript != null)
         {   
             playerMovementScript.enabled = true;
@@ -121,7 +134,7 @@ public class PlayerAttack : MonoBehaviour
         Vector3 scale = transform.localScale;
         // Добавляем отступ по направлению взгляда игрока
         Vector3 spawnPoint = playerCenter + transform.right * Mathf.Sign(scale.x) * forwardOffset;
-
+        AttackAnimator.SetTrigger("PunchAttack");
         return spawnPoint;
     }
 }

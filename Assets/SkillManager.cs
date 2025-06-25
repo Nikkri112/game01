@@ -6,6 +6,8 @@ public class SkillManager : MonoBehaviour
 {
     public static SkillManager Instance; // Singleton для легкого доступа
 
+    public GameObject availableSkills;
+
     [Header("Все доступные способности")]
     public List<Skill> allAvailableSkills = new List<Skill>();
 
@@ -59,6 +61,16 @@ public class SkillManager : MonoBehaviour
                 ActivateSelectedSkill(i + 1); // +1, потому что слоты 1, 2, 3, 4
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            availableSkills.SetActive(true);
+        }
+        if (Input.GetKeyUp(KeyCode.Tab))
+        {
+            availableSkills.SetActive(false);
+        }
+
     }
 
     /// <summary>

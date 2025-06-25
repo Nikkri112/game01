@@ -85,6 +85,7 @@ public class LightningStrikeSkill : Skill
 
         GameObject nearestEnemy = null;
         float shortestDistance = Mathf.Infinity;
+        Debug.Log("Вьебу ща");
 
         // 2. Теперь проходим по полученным коллайдерам и фильтруем по тегу и другим критериям.
         foreach (Collider2D hitCollider in hitColliders)

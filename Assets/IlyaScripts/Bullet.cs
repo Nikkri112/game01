@@ -16,6 +16,14 @@ public class Bullet : MonoBehaviour
     private void Update()
     {
         transform.Translate(direction.normalized * speed * Time.deltaTime);
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            if (rb.linearVelocity.x <= 0)
+            {
+                transform.localScale = new Vector3(-1 * transform.localScale.x, 0,0);
+            }
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -56,5 +64,6 @@ public class Bullet : MonoBehaviour
             return;
         }
        // Пуля уничтожается при любом столкновении
+       
     }
 }

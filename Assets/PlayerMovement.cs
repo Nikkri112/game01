@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -67,14 +68,7 @@ public class PlayerMovement : MonoBehaviour
     {
         
         moveInput = Input.GetAxisRaw("Horizontal");
-        if (Math.Abs(rb.linearVelocityX) >= 0.0001f)
-        {
-            anim.SetFloat("IsRunning",1);
-        }
-        else
-        {
-            anim.SetFloat("IsRunning", 0);
-        }
+        anim.SetFloat("IsRunning",Math.Abs(rb.linearVelocityX));
         // Проверка земли и стен
         CheckCollisions();
 
@@ -96,6 +90,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Flip();
         }
+        anim.SetBool("WallSliding", isWallSliding);
 
         // Ускоренное падение
         if (rb.linearVelocity.y < 0 && !isGrounded)
@@ -106,8 +101,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isDashing) return; // Не управлять движением во время рывка
-
+        if (isDashing)
+        {
+            gameObject.tag = "IgnoreThisTag";
+            gameObject.layer = 8;
+            return; // Не управлять движением во время рывка
+        }
+        else {
+            gameObject.layer = 0;
+            gameObject.tag = "Player";
+        }
         UpdateMovement();
         HandleWallSlide();
     }
